@@ -89,6 +89,7 @@ protected:
 
 public slots :
     void updateAnimation();
+
 private:
     //QBasicTimer timer;
 

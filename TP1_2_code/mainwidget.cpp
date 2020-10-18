@@ -183,18 +183,31 @@ void MainWidget::initShaders()
 //! [4]
 void MainWidget::initTextures()
 {
-    // Load cube.png image
+
     texture = new QOpenGLTexture(QImage(":/grass.png").mirrored());
-
-    // Set nearest filtering mode for texture minification
     texture->setMinificationFilter(QOpenGLTexture::Nearest);
-
-    // Set bilinear filtering mode for texture magnification
     texture->setMagnificationFilter(QOpenGLTexture::Linear);
-
-    // Wrap texture coordinates by repeating
-    // f.ex. texture coordinate (1.1, 1.2) is same as (0.1, 0.2)
     texture->setWrapMode(QOpenGLTexture::Repeat);
+
+    texture_grass = new QOpenGLTexture(QImage(":/grass.png").mirrored());
+    texture_rock = new QOpenGLTexture(QImage(":/rock.png").mirrored());
+    texture_snow = new QOpenGLTexture(QImage(":/snowrocks.png").mirrored());
+
+    texture_grass->setMinificationFilter(QOpenGLTexture::Nearest);
+    texture_grass->setMagnificationFilter(QOpenGLTexture::Linear);
+    texture_grass->setWrapMode(QOpenGLTexture::Repeat);
+
+    texture_rock->setMinificationFilter(QOpenGLTexture::Nearest);
+    texture_rock->setMagnificationFilter(QOpenGLTexture::Linear);
+    texture_rock->setWrapMode(QOpenGLTexture::Repeat);
+
+    texture_snow->setMinificationFilter(QOpenGLTexture::Nearest);
+    texture_snow->setMagnificationFilter(QOpenGLTexture::Linear);
+    texture_snow->setWrapMode(QOpenGLTexture::Repeat);
+
+
+
+
 }
 //! [4]
 
@@ -220,7 +233,13 @@ void MainWidget::paintGL()
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    texture->bind();
+
+    texture->bind(0);
+    texture_grass->bind(1);
+    texture_rock->bind(2);
+    texture_snow->bind(3);
+
+
 
 //! [6]
     // Calculate model view transformation
@@ -229,7 +248,10 @@ void MainWidget::paintGL()
 
     model.setToIdentity();
     model.translate(mouvement_x,mouvement_y,mouvement_z);
-    //model.rotate(mouvement_rotation,QVector3D(0.0f,1.0f,0.0f));
+    if(!this->mode_libre){
+        model.rotate(mouvement_rotation,QVector3D(0.0f,1.0f,0.0f));
+    }
+
     model.rotate(-90,QVector3D(1.0,0.0,0.0));
     model.translate(-0.5,-0.5,0.0);
 
@@ -246,6 +268,9 @@ void MainWidget::paintGL()
 
     // Use texture unit 0 which contains cube.png
     program.setUniformValue("texture", 0);
+    program.setUniformValue("texture_grass", 1);
+    program.setUniformValue("texture_rock", 2);
+    program.setUniformValue("texture_snow", 3);
 
 
     glEnable(GL_LIGHTING);
@@ -278,6 +303,10 @@ void MainWidget::keyPressEvent(QKeyEvent* e){
         mouvement_y-=0.1f;
         break;
     case Qt::Key::Key_C :
+        if(mode_libre) mode_libre = false;
+        else mode_libre = true;
+        break;
+    case Qt::Key::Key_Escape :
         if(this->geometries->polygone_line == true){
             this->geometries->polygone_line = false;
 

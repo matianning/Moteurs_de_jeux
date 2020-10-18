@@ -86,6 +86,7 @@ void GeometryEngine::initPlaneGeometry(){
 
                 //Modification d'altutude par un heightmap
                 vertices[i * height + j].position[2]=(float)qGray(heightmap.pixel( i, j))/(float)255;
+                //std::cout<<(float)qGray(heightmap.pixel( i, j))/(float)255<<std::endl;
             }
         }
     }

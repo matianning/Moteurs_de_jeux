@@ -98,6 +98,10 @@ private:
     GeometryEngine *geometries;
 
     QOpenGLTexture *texture;
+    QOpenGLTexture * texture_grass;
+    QOpenGLTexture * texture_rock;
+    QOpenGLTexture * texture_snow;
+
 
     QMatrix4x4 projection;
 
@@ -111,7 +115,7 @@ private:
     float mouvement_y = 0.0f;
     float mouvement_rotation = 0.0f;
 
-
+    bool mode_libre = false;
 
 };
 

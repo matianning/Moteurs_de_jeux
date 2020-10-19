@@ -67,11 +67,12 @@ public:
     static const int _x = 128;
     static const int _y = 128;
     static const int taille_index = (_x -1) * ((2 * _y) + 2) - 2;
+    float ratio = 10.0f;    //pour zoomer "ratio" fois plus grand
+
 
 private:
 
     void initPlaneGeometry();
-
 
 
 

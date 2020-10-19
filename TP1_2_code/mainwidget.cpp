@@ -51,15 +51,21 @@
 #include "mainwidget.h"
 
 #include <QMouseEvent>
-
 #include <math.h>
+#include <QPainter>
 
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
     geometries(0),
     texture(0),
-    angularSpeed(0)
+    angularSpeed(0),
+    frameCount(0)
 {
+       last_count = 0;
+       last_time = QTime::currentTime();
+       QTimer *timer = new QTimer(this);
+       connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
+       timer->start(100);
 }
 
 MainWidget::~MainWidget()
@@ -183,12 +189,6 @@ void MainWidget::initShaders()
 //! [4]
 void MainWidget::initTextures()
 {
-
-    texture = new QOpenGLTexture(QImage(":/grass.png").mirrored());
-    texture->setMinificationFilter(QOpenGLTexture::Nearest);
-    texture->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture->setWrapMode(QOpenGLTexture::Repeat);
-
     texture_grass = new QOpenGLTexture(QImage(":/grass.png").mirrored());
     texture_rock = new QOpenGLTexture(QImage(":/rock.png").mirrored());
     texture_snow = new QOpenGLTexture(QImage(":/snowrocks.png").mirrored());
@@ -204,37 +204,47 @@ void MainWidget::initTextures()
     texture_snow->setMinificationFilter(QOpenGLTexture::Nearest);
     texture_snow->setMagnificationFilter(QOpenGLTexture::Linear);
     texture_snow->setWrapMode(QOpenGLTexture::Repeat);
-
-
-
-
 }
-//! [4]
 
-//! [5]
+
 void MainWidget::resizeGL(int w, int h)
 {
-    // Calculate aspect ratio
-    qreal aspect = qreal(w) / qreal(h ? h : 1);
+   qreal aspect = qreal(w) / qreal(h ? h : 1);
+   qreal zNear = 1.0, zFar = 7.0, fov = 45.0;
 
-    // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 1.0, zFar = 7.0, fov = 45.0;
-
-    // Reset projection
+   if(this->mode_libre){
+       zNear = 1.0; zFar = 7.0; fov = 0.0;
+   }
+   else{
+       zNear = 1.0; zFar = 7.0* this->geometries->ratio; fov = 45.0;
+   }
     projection.setToIdentity();
-
-    // Set perspective projection
     projection.perspective(fov, aspect, zNear, zFar);
 }
-//! [5]
+
 
 void MainWidget::paintGL()
 {
+    frameCount++;
+
+    QTime new_time = QTime::currentTime();
+    if (last_time.msecsTo(new_time) >= 1000)
+    {
+    // sauvegarder le FPS dans last_count et on réinitialise
+        last_count = frameCount;
+        frameCount = 0;
+        last_time = QTime::currentTime();
+    }
+
+/*
+    qglColor(Qt::white);
+    renderText(20, 20, QString("FPS:%1").arg(last_count));
+*/
+
+
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    texture->bind(0);
     texture_grass->bind(1);
     texture_rock->bind(2);
     texture_snow->bind(3);
@@ -247,54 +257,51 @@ void MainWidget::paintGL()
     QMatrix4x4 view, model;
 
     model.setToIdentity();
-    model.translate(mouvement_x,mouvement_y,mouvement_z);
-    if(!this->mode_libre){
-        model.rotate(mouvement_rotation,QVector3D(0.0f,1.0f,0.0f));
+    if(this->mode_libre){
+        model.translate(mouvement_x,mouvement_y,mouvement_z);   //movement de la caméra (mode libre)
     }
 
-    model.rotate(-90,QVector3D(1.0,0.0,0.0));
-    model.translate(-0.5,-0.5,0.0);
+    if(!this->mode_libre){
+        model.rotate(timer_rotation,QVector3D(0.0f,1.0f,0.0f)); //rotation automatique dans le mode orbital
+    }
 
+    model.rotate(-90,QVector3D(1.0,0.0,0.0));   //pour dresser le plan
+    model.translate(-0.5 * this->geometries->ratio,-0.5* this->geometries->ratio,0.0);             //mettre le plan au milieu de la scène
 
-
-    view.lookAt(QVector3D(0,1.0,1.5), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
-
+    if(!this->mode_libre){
+        view.lookAt(QVector3D(0,1.0 * this->geometries->ratio,1.5* this->geometries->ratio), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
+    }
+    else{
+        view.lookAt(QVector3D(0,1.0 * this->geometries->ratio/5 ,1.5 * this->geometries->ratio/5), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
+    }
 
     matrixMVP = this->projection * view * model;
 
-    // Set modelview-projection matrix
     program.setUniformValue("mvp_matrix", matrixMVP);
 //! [6]
 
-    // Use texture unit 0 which contains cube.png
-    program.setUniformValue("texture", 0);
     program.setUniformValue("texture_grass", 1);
     program.setUniformValue("texture_rock", 2);
     program.setUniformValue("texture_snow", 3);
 
 
     glEnable(GL_LIGHTING);
-
-    // Draw cube geometry
     geometries->drawPlane(&program);
-
-
-
 }
 
 void MainWidget::keyPressEvent(QKeyEvent* e){
     switch (e->key()) {
-    case Qt::Key::Key_Up :
-        mouvement_z-=0.1f;
+    case Qt::Key::Key_Z :
+        mouvement_z+=0.05f;
         break;
-    case Qt::Key::Key_Down :
-        mouvement_z+=0.1f;
+    case Qt::Key::Key_S :
+        mouvement_z-=0.05f;
         break;
-    case Qt::Key::Key_Left :
-        mouvement_x-=0.1f;
+    case Qt::Key::Key_Q :
+        mouvement_x+=0.05f;
         break;
-    case Qt::Key::Key_Right :
-        mouvement_x+=0.1f;
+    case Qt::Key::Key_D :
+        mouvement_x-=0.05f;
         break;
     case Qt::Key::Key_U :
         mouvement_y+=0.1f;
@@ -302,14 +309,19 @@ void MainWidget::keyPressEvent(QKeyEvent* e){
     case Qt::Key::Key_I :
         mouvement_y-=0.1f;
         break;
+    case Qt::Key::Key_Up:
+        vitesse_rotation+=0.5f;
+        break;
+    case Qt::Key::Key_Down:
+        vitesse_rotation-=0.5f;
+        break;
     case Qt::Key::Key_C :
         if(mode_libre) mode_libre = false;
         else mode_libre = true;
         break;
-    case Qt::Key::Key_Escape :
+    case Qt::Key::Key_P :
         if(this->geometries->polygone_line == true){
             this->geometries->polygone_line = false;
-
         }
         else{
             this->geometries->polygone_line = true;
@@ -321,6 +333,6 @@ void MainWidget::keyPressEvent(QKeyEvent* e){
 
 void MainWidget::updateAnimation()
 {
-    mouvement_rotation += 2;
+    timer_rotation+=vitesse_rotation;
     this->update();
 }

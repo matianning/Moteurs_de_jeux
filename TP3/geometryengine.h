@@ -65,9 +65,8 @@ public:
     void draw(QOpenGLShaderProgram *program);
 
     bool polygone_line = false;
-    static const int _x = 128;
-    static const int _y = 128;
-    static const int taille_index = (_x -1) * ((2 * _y) + 2) - 2;
+
+    int taille_index = 0;
 
 private:
 

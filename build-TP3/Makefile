@@ -259,6 +259,7 @@ Makefile: ..\TP3\gameengine.pro E:\Qt\5.15.0\msvc2015_64\mkspecs\win32-msvc\qmak
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\features\qt_config.prf \
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\win32-msvc\qmake.conf \
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\features\spec_post.prf \
+		.qmake.stash \
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\features\exclusive_builds.prf \
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\common\msvc-version.conf \
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\features\toolchain.prf \
@@ -288,8 +289,8 @@ Makefile: ..\TP3\gameengine.pro E:\Qt\5.15.0\msvc2015_64\mkspecs\win32-msvc\qmak
 		E:\Qt\5.15.0\msvc2015_64\lib\Qt5Gui.prl \
 		E:\Qt\5.15.0\msvc2015_64\lib\Qt5Core.prl \
 		E:\Qt\5.15.0\msvc2015_64\lib\qtmain.prl \
-		.qmake.stash \
 		E:\Qt\5.15.0\msvc2015_64\mkspecs\features\build_pass.prf \
+		..\TP3\Models.qrc \
 		..\TP3\shaders.qrc \
 		..\TP3\textures.qrc \
 		E:\Qt\5.15.0\msvc2015_64\lib\Qt5Widgetsd.prl \
@@ -472,6 +473,7 @@ E:\Qt\5.15.0\msvc2015_64\mkspecs\features\qt_functions.prf:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\features\qt_config.prf:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\win32-msvc\qmake.conf:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\features\spec_post.prf:
+.qmake.stash:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\features\exclusive_builds.prf:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\common\msvc-version.conf:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\features\toolchain.prf:
@@ -501,8 +503,8 @@ E:\Qt\5.15.0\msvc2015_64\lib\Qt5Widgets.prl:
 E:\Qt\5.15.0\msvc2015_64\lib\Qt5Gui.prl:
 E:\Qt\5.15.0\msvc2015_64\lib\Qt5Core.prl:
 E:\Qt\5.15.0\msvc2015_64\lib\qtmain.prl:
-.qmake.stash:
 E:\Qt\5.15.0\msvc2015_64\mkspecs\features\build_pass.prf:
+..\TP3\Models.qrc:
 ..\TP3\shaders.qrc:
 ..\TP3\textures.qrc:
 E:\Qt\5.15.0\msvc2015_64\lib\Qt5Widgetsd.prl:

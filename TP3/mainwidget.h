@@ -77,8 +77,8 @@ public:
     ~MainWidget();
 
 protected:
-    //void mousePressEvent(QMouseEvent *e) override;
-    //void mouseReleaseEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
     void timerEvent(QTimerEvent *e) override;
 
     void initializeGL() override;
@@ -127,7 +127,7 @@ private:
     float mouvement_rotation = 0.0f;
     float timer_rotation = 0.0f;
     float vitesse_rotation = 1.0f;
-    bool mode_libre = false;
+    bool mode_libre = true;
 
     int frameCount;
     QTime last_time = QTime::currentTime();

@@ -79,7 +79,7 @@ MainWidget::~MainWidget()
 }
 
 //! [0]
- /*
+
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
@@ -105,7 +105,7 @@ void MainWidget::mouseReleaseEvent(QMouseEvent *e)
     angularSpeed += acc;
 }
 //! [0]
-*/
+
 //! [1]
 void MainWidget::timerEvent(QTimerEvent *)
 {
@@ -133,7 +133,7 @@ void MainWidget::initializeGL()
     glClearColor(0, 0, 0, 1);
 
     initShaders();
-    initTextures();
+    //initTextures();
 
 //! [2]
     // Enable depth buffer
@@ -210,45 +210,25 @@ void MainWidget::initTextures()
 void MainWidget::resizeGL(int w, int h)
 {
    qreal aspect = qreal(w) / qreal(h ? h : 1);
-   qreal zNear = 1.0, zFar = 7.0, fov = 45.0;
+   qreal zNear = 0.0, zFar = 7.0, fov = 45.0;
 
-   if(this->mode_libre){
-       zNear = 1.0; zFar = 7.0; fov = 0.0;
-   }
-   else{
-       zNear = 1.0; zFar = 7.0* this->geometries->ratio; fov = 45.0;
-   }
+
     projection.setToIdentity();
-    projection.perspective(fov, aspect, zNear, zFar);
+    //projection.perspective(fov, aspect, zNear, zFar);
 }
 
 
 void MainWidget::paintGL()
 {
-    frameCount++;
-
-    QTime new_time = QTime::currentTime();
-    if (last_time.msecsTo(new_time) >= 1000)
-    {
-    // sauvegarder le FPS dans last_count et on réinitialise
-        last_count = frameCount;
-        frameCount = 0;
-        last_time = QTime::currentTime();
-    }
-
-/*
-    qglColor(Qt::white);
-    renderText(20, 20, QString("FPS:%1").arg(last_count));
-*/
 
 
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+/*
     texture_grass->bind(1);
     texture_rock->bind(2);
     texture_snow->bind(3);
-
+*/
 
 
 //! [6]
@@ -257,36 +237,35 @@ void MainWidget::paintGL()
     QMatrix4x4 view, model;
 
     model.setToIdentity();
+
     if(this->mode_libre){
         model.translate(mouvement_x,mouvement_y,mouvement_z);   //movement de la caméra (mode libre)
     }
-
+/*
     if(!this->mode_libre){
         model.rotate(timer_rotation,QVector3D(0.0f,1.0f,0.0f)); //rotation automatique dans le mode orbital
     }
 
     model.rotate(-90,QVector3D(1.0,0.0,0.0));   //pour dresser le plan
-    model.translate(-0.5 * this->geometries->ratio,-0.5* this->geometries->ratio,0.0);             //mettre le plan au milieu de la scène
+    model.translate(-0.5,-0.5,0.0);             //mettre le plan au milieu de la scène
 
-    if(!this->mode_libre){
-        view.lookAt(QVector3D(0,1.0 * this->geometries->ratio,1.5* this->geometries->ratio), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
-    }
-    else{
-        view.lookAt(QVector3D(0,1.0 * this->geometries->ratio/5 ,1.5 * this->geometries->ratio/5), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
-    }
+    view.lookAt(QVector3D(0,0.0 ,1.5), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
+*/
 
+    view.lookAt(QVector3D(0.0f,0.0f, 1.0f), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
     matrixMVP = this->projection * view * model;
 
     program.setUniformValue("mvp_matrix", matrixMVP);
 //! [6]
 
+    /*
     program.setUniformValue("texture_grass", 1);
     program.setUniformValue("texture_rock", 2);
     program.setUniformValue("texture_snow", 3);
-
+*/
 
     glEnable(GL_LIGHTING);
-    geometries->drawPlane(&program);
+    geometries->draw(&program);
 }
 
 void MainWidget::keyPressEvent(QKeyEvent* e){

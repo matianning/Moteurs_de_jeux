@@ -78,14 +78,16 @@ template< class point_t , class type_t > bool open( const std::string & filename
 
     for( int v = 0 ; v < n_vertices ; ++v )
     {
-        typename point_t::type_t x , y , z;
+        typename type_t x , y , z;
         myfile >> x >> y >> z;
+/*
         if( std::isnan(x) )
-            x = typename point_t::type_t(0.0);
+            x = typename type_t(0.0);
         if( std::isnan(y) )
-            y = typename point_t::type_t(0.0);
+            y = typename type_t(0.0);
         if( std::isnan(z) )
-            z = typename point_t::type_t(0.0);
+            z = typename type_t(0.0);
+*/
         vertices[v] = point_t( x , y , z );
     }
 

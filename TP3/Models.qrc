@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>sphere.obj</file>
         <file>sphere.off</file>
+        <file>cube.obj</file>
     </qresource>
 </RCC>

@@ -4,6 +4,7 @@ TARGET = gameengine
 TEMPLATE = app
 
 SOURCES += main.cpp \
+    Cube.cpp \
     GameComponent.cpp \
     GameObject.cpp \
     Transform.cpp
@@ -14,6 +15,7 @@ SOURCES += \
 
 HEADERS += \
     BasicIO.h \
+    Cube.h \
     GameComponent.h \
     GameObject.h \
     Transform.h \

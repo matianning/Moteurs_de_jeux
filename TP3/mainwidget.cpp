@@ -210,11 +210,11 @@ void MainWidget::initTextures()
 void MainWidget::resizeGL(int w, int h)
 {
    qreal aspect = qreal(w) / qreal(h ? h : 1);
-   qreal zNear = 0.0, zFar = 7.0, fov = 45.0;
+   qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
 
 
     projection.setToIdentity();
-    //projection.perspective(fov, aspect, zNear, zFar);
+    projection.perspective(fov, aspect, zNear, zFar);
 }
 
 
@@ -238,6 +238,8 @@ void MainWidget::paintGL()
 
     model.setToIdentity();
 
+    model.translate(0.0,0.0,-5.0);
+
     if(this->mode_libre){
         model.translate(mouvement_x,mouvement_y,mouvement_z);   //movement de la caméra (mode libre)
     }
@@ -252,7 +254,7 @@ void MainWidget::paintGL()
     view.lookAt(QVector3D(0,0.0 ,1.5), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
 */
 
-    view.lookAt(QVector3D(0.0f,0.0f, 1.0f), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
+ //   view.lookAt(QVector3D(0.0f,0.0f, 3.0f), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
     matrixMVP = this->projection * view * model;
 
     program.setUniformValue("mvp_matrix", matrixMVP);

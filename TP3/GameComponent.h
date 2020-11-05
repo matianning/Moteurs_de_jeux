@@ -6,7 +6,7 @@
 class GameComponent{
 public :
 
-    virtual void input();
+    virtual void init();
     virtual void update();
     virtual void render();
 

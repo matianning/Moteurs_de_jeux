@@ -54,38 +54,27 @@
 #include <QOpenGLFunctions_3_1>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
-#include "BasicIO.h"
+#include "GameObject.h"
+#include "Sphere.h"
+#include <vector>
 
 class GeometryEngine : protected QOpenGLFunctions_3_1
 {
 public:
     GeometryEngine();
     virtual ~GeometryEngine();
-
-    void draw(QOpenGLShaderProgram *program);
-
+    void drawGeometry(QOpenGLShaderProgram *program);
     bool polygone_line = false;
 
-    int taille_index = 0;
+
 
 private:
+    void initGeometry();
+    std::vector<GameObject *> gameobjects;
 
-    void init();
-
-
+    int size = 0; //size index total
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
 };
-
-
-
-
-
-
-
-
-
-
-
 
 #endif // GEOMETRYENGINE_H

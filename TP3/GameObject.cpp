@@ -1,14 +1,24 @@
 #include "GameObject.h"
 
+void GameObject::init(std::string filename){
+    std::vector<QVector3D> vertices;
+    std::vector<std::vector<GLushort>> indices;
+    OBJIO::open(filename,vertices,indices);
 
-void GameObject::input(){
+    int size_vertices = vertices.size();
+    int size_indices = indices.size() * 3;
+    QVector3D * t_vertices = new QVector3D[size_vertices];
+    GLushort * t_indices = new GLushort[size_indices];
+}
+
+void GameObject::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer &indexBuf){
 
     for(GameComponent component : components){
-        component.input();
+        component.init();
     }
 
     for(GameObject child : children){
-        child.input();
+        child.init(arrayBuf, indexBuf);
     }
 }
 
@@ -23,13 +33,13 @@ void GameObject::update(){
     }
 }
 
-void GameObject::render(){
+void GameObject::render(QOpenGLShaderProgram *program, QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
 
     for(GameComponent component : components){
         component.render();
     }
 
     for(GameObject child : children){
-        child.render();
+        child.render(program, arrayBuf, indexBuf);
     }
 }

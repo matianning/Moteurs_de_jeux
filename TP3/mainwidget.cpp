@@ -51,21 +51,15 @@
 #include "mainwidget.h"
 
 #include <QMouseEvent>
+
 #include <math.h>
-#include <QPainter>
 
 MainWidget::MainWidget(QWidget *parent) :
     QOpenGLWidget(parent),
     geometries(0),
     texture(0),
-    angularSpeed(0),
-    frameCount(0)
+    angularSpeed(0)
 {
-       last_count = 0;
-       last_time = QTime::currentTime();
-       QTimer *timer = new QTimer(this);
-       connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
-       timer->start(100);
 }
 
 MainWidget::~MainWidget()
@@ -79,7 +73,6 @@ MainWidget::~MainWidget()
 }
 
 //! [0]
-
 void MainWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
@@ -119,7 +112,6 @@ void MainWidget::timerEvent(QTimerEvent *)
         // Update rotation
         rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
 
-        mouvement_rotation += 10;
         // Request an update
         update();
     }
@@ -133,7 +125,7 @@ void MainWidget::initializeGL()
     glClearColor(0, 0, 0, 1);
 
     initShaders();
-    //initTextures();
+    initTextures();
 
 //! [2]
     // Enable depth buffer
@@ -146,23 +138,7 @@ void MainWidget::initializeGL()
     geometries = new GeometryEngine;
 
     // Use QBasicTimer because its faster than QTimer
-    //timer.start(12, this);
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
-    timer->start(100);
-
-    // Lighting
-    /*
-    glEnable(GL_LIGHT1);
-    GLfloat lightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
-    GLfloat lightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat lightPosition[]= { 3.0f, 3.0f, -5.0f, 1.0f };
-
-    glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
-    glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
-*/
-
+    timer.start(12, this);
 }
 
 //! [3]
@@ -189,117 +165,65 @@ void MainWidget::initShaders()
 //! [4]
 void MainWidget::initTextures()
 {
-    texture_grass = new QOpenGLTexture(QImage(":/grass.png").mirrored());
-    texture_rock = new QOpenGLTexture(QImage(":/rock.png").mirrored());
-    texture_snow = new QOpenGLTexture(QImage(":/snowrocks.png").mirrored());
+    // Load cube.png image
+    texture = new QOpenGLTexture(QImage(":/cube.png").mirrored());
 
-    texture_grass->setMinificationFilter(QOpenGLTexture::Nearest);
-    texture_grass->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture_grass->setWrapMode(QOpenGLTexture::Repeat);
+    // Set nearest filtering mode for texture minification
+    texture->setMinificationFilter(QOpenGLTexture::Nearest);
 
-    texture_rock->setMinificationFilter(QOpenGLTexture::Nearest);
-    texture_rock->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture_rock->setWrapMode(QOpenGLTexture::Repeat);
+    // Set bilinear filtering mode for texture magnification
+    texture->setMagnificationFilter(QOpenGLTexture::Linear);
 
-    texture_snow->setMinificationFilter(QOpenGLTexture::Nearest);
-    texture_snow->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture_snow->setWrapMode(QOpenGLTexture::Repeat);
+    // Wrap texture coordinates by repeating
+    // f.ex. texture coordinate (1.1, 1.2) is same as (0.1, 0.2)
+    texture->setWrapMode(QOpenGLTexture::Repeat);
 }
+//! [4]
 
-
+//! [5]
 void MainWidget::resizeGL(int w, int h)
 {
-   qreal aspect = qreal(w) / qreal(h ? h : 1);
-   qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+    // Calculate aspect ratio
+    qreal aspect = qreal(w) / qreal(h ? h : 1);
 
+    // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
+    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
 
+    // Reset projection
     projection.setToIdentity();
+
+    // Set perspective projection
     projection.perspective(fov, aspect, zNear, zFar);
 }
-
+//! [5]
 
 void MainWidget::paintGL()
 {
-
-
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-/*
-    texture_grass->bind(1);
-    texture_rock->bind(2);
-    texture_snow->bind(3);
-*/
 
+    texture->bind();
 
 //! [6]
     // Calculate model view transformation
-    QMatrix4x4 matrixMVP;
-    QMatrix4x4 view, model;
+    QMatrix4x4 matrix;
+    matrix.translate(0.0, 0.0, -5.0);
+    matrix.rotate(rotation);
 
-    model.setToIdentity();
-
-    model.translate(0.0,0.0,-5.0);
-
-    if(this->mode_libre){
-        model.translate(mouvement_x,mouvement_y,mouvement_z);   //movement de la caméra (mode libre)
-    }
-/*
-    if(!this->mode_libre){
-        model.rotate(timer_rotation,QVector3D(0.0f,1.0f,0.0f)); //rotation automatique dans le mode orbital
-    }
-
-    model.rotate(-90,QVector3D(1.0,0.0,0.0));   //pour dresser le plan
-    model.translate(-0.5,-0.5,0.0);             //mettre le plan au milieu de la scène
-
-    view.lookAt(QVector3D(0,0.0 ,1.5), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
-*/
-
- //   view.lookAt(QVector3D(0.0f,0.0f, 3.0f), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
-    matrixMVP = this->projection * view * model;
-
-    program.setUniformValue("mvp_matrix", matrixMVP);
+    // Set modelview-projection matrix
+    program.setUniformValue("mvp_matrix", projection * matrix);
 //! [6]
 
-    /*
-    program.setUniformValue("texture_grass", 1);
-    program.setUniformValue("texture_rock", 2);
-    program.setUniformValue("texture_snow", 3);
-*/
+    // Use texture unit 0 which contains cube.png
+    program.setUniformValue("texture", 0);
 
-    glEnable(GL_LIGHTING);
-    geometries->draw(&program);
+    // Draw cube geometry
+    geometries->drawGeometry(&program);
 }
 
 void MainWidget::keyPressEvent(QKeyEvent* e){
     switch (e->key()) {
-    case Qt::Key::Key_Z :
-        mouvement_z+=0.05f;
-        break;
-    case Qt::Key::Key_S :
-        mouvement_z-=0.05f;
-        break;
-    case Qt::Key::Key_Q :
-        mouvement_x+=0.05f;
-        break;
-    case Qt::Key::Key_D :
-        mouvement_x-=0.05f;
-        break;
-    case Qt::Key::Key_U :
-        mouvement_y+=0.1f;
-        break;
-    case Qt::Key::Key_I :
-        mouvement_y-=0.1f;
-        break;
-    case Qt::Key::Key_Up:
-        vitesse_rotation+=0.5f;
-        break;
-    case Qt::Key::Key_Down:
-        vitesse_rotation-=0.5f;
-        break;
-    case Qt::Key::Key_C :
-        if(mode_libre) mode_libre = false;
-        else mode_libre = true;
-        break;
+
     case Qt::Key::Key_P :
         if(this->geometries->polygone_line == true){
             this->geometries->polygone_line = false;
@@ -310,10 +234,4 @@ void MainWidget::keyPressEvent(QKeyEvent* e){
         break;
     }
     repaint();
-}
-
-void MainWidget::updateAnimation()
-{
-    timer_rotation+=vitesse_rotation;
-    this->update();
 }

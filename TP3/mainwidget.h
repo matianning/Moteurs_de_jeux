@@ -61,10 +61,6 @@
 #include <QBasicTimer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
-#include <QTimer>
-#include <QTime>
-#include <d3d9types.h>
-#include <iostream>
 
 class GeometryEngine;
 
@@ -89,30 +85,13 @@ protected:
     void initTextures();
 
     void keyPressEvent(QKeyEvent* e) override;
-    void renderText(double x, double y, double z, const QString &str);
-    void renderText(QVector3D &textPosWorld, QString text);
-    inline GLint project(GLdouble objx, GLdouble objy, GLdouble objz,
-        const GLdouble model[16], const GLdouble proj[16],
-        const GLint viewport[4],
-        GLdouble * winx, GLdouble * winy, GLdouble * winz);
-    inline void transformPoint(GLdouble out[4], const GLdouble m[16], const GLdouble in[4]);
-
-public slots :
-    void updateAnimation();
-
 
 private:
-    //QBasicTimer timer;
-
-
+    QBasicTimer timer;
     QOpenGLShaderProgram program;
     GeometryEngine *geometries;
 
     QOpenGLTexture *texture;
-    QOpenGLTexture * texture_grass;
-    QOpenGLTexture * texture_rock;
-    QOpenGLTexture * texture_snow;
-
 
     QMatrix4x4 projection;
 
@@ -120,19 +99,6 @@ private:
     QVector3D rotationAxis;
     qreal angularSpeed;
     QQuaternion rotation;
-
-    float mouvement_x = 0.0f;
-    float mouvement_z = 0.0f;
-    float mouvement_y = 0.0f;
-    float mouvement_rotation = 0.0f;
-    float timer_rotation = 0.0f;
-    float vitesse_rotation = 1.0f;
-    bool mode_libre = true;
-
-    int frameCount;
-    QTime last_time = QTime::currentTime();
-    int last_count;
-
 };
 
 #endif // MAINWIDGET_H

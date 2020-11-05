@@ -1,6 +1,6 @@
 #include  "GameComponent.h"
 
-void GameComponent::input(){
+void GameComponent::init(){
 
 }
 

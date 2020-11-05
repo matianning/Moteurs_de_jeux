@@ -4,9 +4,9 @@ TARGET = gameengine
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    Cube.cpp \
     GameComponent.cpp \
     GameObject.cpp \
+    Sphere.cpp \
     Transform.cpp
 
 SOURCES += \
@@ -15,26 +15,17 @@ SOURCES += \
 
 HEADERS += \
     BasicIO.h \
-    Cube.h \
     GameComponent.h \
     GameObject.h \
+    Sphere.h \
     Transform.h \
     mainwidget.h \
     geometryengine.h
 
 RESOURCES += \
-    Models.qrc \
     shaders.qrc \
     textures.qrc
 
 # install
 target.path = $$[YOUR_PATH]
 INSTALLS += target
-
-DISTFILES += \
-    TP2_ressources/grass.png \
-    TP2_ressources/heightmap-1024x1024.png \
-    TP2_ressources/rock.png \
-    TP2_ressources/snowrocks.png \
-    sphere.obj \
-    sphere.off

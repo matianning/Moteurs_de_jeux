@@ -1,15 +1,32 @@
 #include "GameObject.h"
 
-void GameObject::init(std::string filename){
-    std::vector<QVector3D> vertices;
-    std::vector<std::vector<GLushort>> indices;
-    OBJIO::open(filename,vertices,indices);
 
-    int size_vertices = vertices.size();
-    int size_indices = indices.size() * 3;
-    QVector3D * t_vertices = new QVector3D[size_vertices];
-    GLushort * t_indices = new GLushort[size_indices];
+void GameObject::translate(const QVector3D & t){
+    this->transform.setPosition(t);
+    this->transform.apply();
+    for(GameObject * child : children){
+        child->transform.setPosition(t);
+        child->transform.apply();
+    }
 }
+void GameObject::rotate(const QVector3D & r){
+    this->transform.setRotation(r);
+    this->transform.apply();
+    for(GameObject * child : children){
+        child->transform.setRotation(r);
+        child->transform.apply();
+    }
+}
+void GameObject::scale(const QVector3D & scale){
+    this->transform.setScale(scale);
+    this->transform.apply();
+    for(GameObject * child : children){
+        child->transform.setScale(scale);
+        child->transform.apply();
+    }
+}
+
+
 
 void GameObject::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer &indexBuf){
 
@@ -17,19 +34,19 @@ void GameObject::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer &indexBuf){
         component.init();
     }
 
-    for(GameObject child : children){
-        child.init(arrayBuf, indexBuf);
+    for(GameObject * child : children){
+        child->init(arrayBuf, indexBuf);
     }
 }
 
-void GameObject::update(){
+void GameObject::update(QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
 
     for(GameComponent component : components){
         component.update();
     }
 
-    for(GameObject child : children){
-        child.update();
+    for(GameObject * child : children){
+        child->update(arrayBuf,  indexBuf);
     }
 }
 
@@ -39,7 +56,8 @@ void GameObject::render(QOpenGLShaderProgram *program, QOpenGLBuffer& arrayBuf, 
         component.render();
     }
 
-    for(GameObject child : children){
-        child.render(program, arrayBuf, indexBuf);
+    for(GameObject * child : children){
+        this->size_indices += child->size_indices;
+        child->render(program, arrayBuf, indexBuf);
     }
 }

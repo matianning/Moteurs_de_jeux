@@ -63,11 +63,15 @@ struct VertexData
 GeometryEngine::GeometryEngine()    //RENDER ENGINE
     : indexBuf(QOpenGLBuffer::IndexBuffer)
 {
+
     initializeOpenGLFunctions();
 
-    // Generate 2 VBOs
-    arrayBuf.create();
-    indexBuf.create();
+
+        arrayBuf.create();
+        indexBuf.create();
+
+
+
 
     // Initializes cube geometry and transfers it to VBOs
     initGeometry();
@@ -75,8 +79,11 @@ GeometryEngine::GeometryEngine()    //RENDER ENGINE
 
 GeometryEngine::~GeometryEngine()
 {
-    arrayBuf.destroy();
-    indexBuf.destroy();
+
+        arrayBuf.destroy();
+        indexBuf.destroy();
+
+
 }
 //! [0]
 
@@ -84,10 +91,18 @@ void GeometryEngine::initGeometry()
 {
 
 
-    Sphere * s1 = new Sphere();
-    s1->init(arrayBuf,indexBuf);
-    gameobjects.push_back(s1);
+    Sphere * soleil = new Sphere();
+    soleil->init(arrayBuf,indexBuf);
+    gameobjects.push_back(soleil);
+    soleil->scale(QVector3D(1.5f,1.5f,1.5f));
+    soleil->update(arrayBuf,indexBuf);
 
+    Sphere * terre = new Sphere();
+    terre->init(arrayBuf,indexBuf);
+    terre->scale(QVector3D(0.5,0.5,0.5));
+    terre->translate(QVector3D(3.0,0.0,0.0));
+    terre->update(arrayBuf,indexBuf);
+    gameobjects.push_back(terre);
 
 
 }

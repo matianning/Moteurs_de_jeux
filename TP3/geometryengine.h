@@ -64,8 +64,8 @@ public:
     GeometryEngine();
     virtual ~GeometryEngine();
     void drawGeometry(QOpenGLShaderProgram *program);
-    bool polygone_line = false;
-
+    bool polygone_line = true;
+    int number_object = 3;
 
 
 private:

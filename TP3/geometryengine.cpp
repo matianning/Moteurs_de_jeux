@@ -96,14 +96,14 @@ void GeometryEngine::initGeometry()
     gameobjects.push_back(soleil);
     soleil->scale(QVector3D(1.5f,1.5f,1.5f));
     soleil->update(arrayBuf,indexBuf);
-
+/*
     Sphere * terre = new Sphere();
     terre->init(arrayBuf,indexBuf);
     terre->scale(QVector3D(0.5,0.5,0.5));
     terre->translate(QVector3D(3.0,0.0,0.0));
     terre->update(arrayBuf,indexBuf);
     gameobjects.push_back(terre);
-
+*/
 
 }
 

@@ -323,6 +323,7 @@ release\moc_mainwidget.cpp: ..\TP3\mainwidget.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\qfile.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\qfiledevice.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\QDataStream \
+		..\TP3\Sphere.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\QOpenGLWidget \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\qopenglwidget.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\qtwidgetsglobal.h \
@@ -533,6 +534,7 @@ release\main.obj: ..\TP3\main.cpp E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\QAp
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\QStringList \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\QFile \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\QDataStream \
+		..\TP3\Sphere.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\QOpenGLWidget \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\qopenglwidget.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\QWidget \
@@ -955,6 +957,7 @@ release\mainwidget.obj: ..\TP3\mainwidget.cpp ..\TP3\mainwidget.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\qfile.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\qfiledevice.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\QDataStream \
+		..\TP3\Sphere.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\QOpenGLWidget \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\qopenglwidget.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtWidgets\qtwidgetsglobal.h \
@@ -1105,6 +1108,7 @@ release\geometryengine.obj: ..\TP3\geometryengine.cpp ..\TP3\geometryengine.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\qfile.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\qfiledevice.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtCore\QDataStream \
+		..\TP3\Sphere.h \
 		E:\Qt\5.15.0\msvc2015_64\include\QtGui\QVector2D \
 		E:\Qt\5.15.0\msvc2015_64\include\QtGui\QVector3D
 

@@ -4,8 +4,33 @@ Sphere::Sphere(){
 
 }
 
-void Sphere::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
+void Sphere::init(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
 
+    std::vector<QVector3D> vertices;
+    std::vector<std::vector<GLushort>> indices;
+    OBJIO::open("sphere.obj",vertices,indices);
+
+    size_vertices = vertices.size();
+    size_indices = indices.size() * 3;
+    this->indexSize += size_indices;
+
+    t_vertices = new QVector3D[vertices.size()];
+    t_indices = new GLushort[indices.size() * 3];
+
+    for(size_t i = 0; i < vertices.size(); i++){
+        t_vertices[i] = vertices[i];
+    }
+    for(size_t i = 0; i < indices.size(); i++){
+        for(size_t j = 0; j < indices[i].size(); j++){
+            t_indices[i * 3 + j] = indices[i][j];
+        }
+    }
+
+
+}
+
+void Sphere::update(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
+    /*
     std::vector<QVector3D> vertices;
     std::vector<std::vector<GLushort>> indices;
     OBJIO::open("sphere.obj",vertices,indices);
@@ -24,38 +49,24 @@ void Sphere::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
             t_indices[i * 3 + j] = indices[i][j];
         }
     }
+*/
 
-
-}
-
-void Sphere::update(QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
-    std::vector<QVector3D> vertices;
-    std::vector<std::vector<GLushort>> indices;
-    OBJIO::open("sphere.obj",vertices,indices);
-
-    t_vertices = new QVector3D[vertices.size()];
-    t_indices = new GLushort[indices.size() * 3];
-
-    for(size_t i = 0; i < vertices.size(); i++){
+    for(int i = 0; i < size_vertices; i++){
         QVector4D transformedPoint;
-        transformedPoint = this->getTransform().getAppliedMatrix() * (QVector4D(vertices[i], 1.0)) ;
+        transformedPoint = this->getTransform().getAppliedMatrix() * (QVector4D(t_vertices[i], 1.0)) ;
         t_vertices[i] = QVector3D(transformedPoint);
-    }
-    for(size_t i = 0; i < indices.size(); i++){
-        for(size_t j = 0; j < indices[i].size(); j++){
-            t_indices[i * 3 + j] = indices[i][j];
-        }
     }
 
     arrayBuf.bind();
-    arrayBuf.allocate(t_vertices, vertices.size() * sizeof(QVector3D));
+    arrayBuf.allocate(t_vertices, size_vertices * sizeof(QVector3D));
 
     indexBuf.bind();
-    indexBuf.allocate(t_indices, indices.size() * 3 * sizeof(GLushort));
+    indexBuf.allocate(t_indices, size_indices * sizeof(GLushort));
+
 }
 
 
-void Sphere::render(QOpenGLShaderProgram *program, QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
+void Sphere::render(QOpenGLShaderProgram *program, QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
 
     // Tell OpenGL which VBOs to use
     arrayBuf.bind();

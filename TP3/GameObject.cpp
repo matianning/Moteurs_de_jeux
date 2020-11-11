@@ -28,7 +28,7 @@ void GameObject::scale(const QVector3D & scale){
 
 
 
-void GameObject::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer &indexBuf){
+void GameObject::init(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
 
     for(GameComponent component : components){
         component.init();
@@ -39,7 +39,7 @@ void GameObject::init(QOpenGLBuffer& arrayBuf, QOpenGLBuffer &indexBuf){
     }
 }
 
-void GameObject::update(QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
+void GameObject::update(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
 
     for(GameComponent component : components){
         component.update();
@@ -50,14 +50,14 @@ void GameObject::update(QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
     }
 }
 
-void GameObject::render(QOpenGLShaderProgram *program, QOpenGLBuffer& arrayBuf, QOpenGLBuffer& indexBuf){
+void GameObject::render(QOpenGLShaderProgram *program, QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
 
     for(GameComponent component : components){
         component.render();
     }
 
     for(GameObject * child : children){
-        this->size_indices += child->size_indices;
+        //this->size_indices += child->size_indices;
         child->render(program, arrayBuf, indexBuf);
     }
 }

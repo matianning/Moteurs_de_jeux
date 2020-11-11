@@ -93,9 +93,14 @@ void GeometryEngine::initGeometry()
 
     Sphere * soleil = new Sphere();
     soleil->init(arrayBuf,indexBuf);
-    gameobjects.push_back(soleil);
     soleil->scale(QVector3D(1.5f,1.5f,1.5f));
     soleil->update(arrayBuf,indexBuf);
+
+    std::cout<<"Size vertices : "<<soleil->size_vertices<<std::endl;
+    std::cout<<"Size indices : "<<soleil->size_indices<<std::endl;
+    gameobjects.push_back(soleil);
+
+
 /*
     Sphere * terre = new Sphere();
     terre->init(arrayBuf,indexBuf);
@@ -105,21 +110,25 @@ void GeometryEngine::initGeometry()
     gameobjects.push_back(terre);
 */
 
+
 }
 
 //! [2]
 void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 {
     for(size_t i = 0; i < gameobjects.size(); i++){
-        gameobjects[i]->render(program, arrayBuf, indexBuf);
-        size+=gameobjects[i]->size_indices;
+       gameobjects[i]->render(program, arrayBuf, indexBuf);
+
+        size += gameobjects[i]->indexSize;
+        std::cout<<"Size : "<<size<<std::endl;
     }
+    /*
     std::cout<<"Size GameObjects : "<<gameobjects.size()<<std::endl;
     std::cout<<"Size total Index : "<<this->size<<std::endl;
+*/
 
 
-
-    glDrawElements(GL_TRIANGLES, this->size, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, this->size , GL_UNSIGNED_SHORT, 0);
     if(this->polygone_line) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

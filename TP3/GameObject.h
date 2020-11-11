@@ -21,13 +21,13 @@ public :
 
     GameObject() = default;
 
-    virtual void init(QOpenGLBuffer& arrayBuf,
-                      QOpenGLBuffer& indexBuf);   //Initilisation de l'objet
-    virtual void update(QOpenGLBuffer& arrayBuf,
-                        QOpenGLBuffer& indexBuf);  //mettre à jour (eg transformation) de l'objet
+    virtual void init(QOpenGLBuffer arrayBuf,
+                      QOpenGLBuffer indexBuf);   //Initilisation de l'objet
+    virtual void update(QOpenGLBuffer arrayBuf,
+                        QOpenGLBuffer indexBuf);  //mettre à jour (eg transformation) de l'objet
     virtual void render(QOpenGLShaderProgram *program,
-                        QOpenGLBuffer & arrayBuf,
-                        QOpenGLBuffer & indexBuf);  //dessiner (à nouveau)
+                        QOpenGLBuffer  arrayBuf,
+                        QOpenGLBuffer  indexBuf);  //dessiner (à nouveau)
 
     void translate(const QVector3D & t);
     void rotate(const QVector3D & r);
@@ -37,7 +37,8 @@ public :
     void addComponent(GameComponent component){components.push_back(component);}
     Transform getTransform(){return transform;}
 
-    int size_indices = 0;
+    int indexSize = 0;
+
 };
 
 

@@ -6,9 +6,13 @@
 class Sphere : public GameObject{
 public :
     Sphere();
-    void init(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf) override;
-    void update(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf) override;
-    void render(QOpenGLShaderProgram *program, QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf) override;
+    ~Sphere(){
+         arrayBuf.destroy();
+         indexBuf.destroy();
+    }
+    void init() override;
+    void update() override;
+    void render(QOpenGLShaderProgram *program) override;
     int size_vertices = 0; //size_vertices
     int size_indices = 0; //size_index
 
@@ -16,6 +20,9 @@ private :
 
     QVector3D * t_vertices;
     GLushort * t_indices;
+
+    QOpenGLBuffer arrayBuf;
+    QOpenGLBuffer indexBuf;
 };
 
 

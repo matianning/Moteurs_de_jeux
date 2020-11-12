@@ -187,7 +187,7 @@ void MainWidget::resizeGL(int w, int h)
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
     // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 0.1, zFar = 30.0, fov = 45.0;
+    const qreal zNear = 0.1, zFar = 50.0, fov = 45.0;
 
     // Reset projection
     projection.setToIdentity();
@@ -207,7 +207,7 @@ void MainWidget::paintGL()
 //! [6]
     // Calculate model view transformation
     QMatrix4x4 matrix;
-    matrix.translate(0.0, 0.0, -12.0);
+    matrix.translate(0.0, 0.0, -20.0);
     matrix.rotate(rotation);
 
     // Set modelview-projection matrix
@@ -218,6 +218,7 @@ void MainWidget::paintGL()
     program.setUniformValue("texture", 0);
 
     // Draw cube geometry
+
     geometries->drawGeometry(&program);
 }
 

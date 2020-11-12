@@ -67,8 +67,8 @@ GeometryEngine::GeometryEngine()    //RENDER ENGINE
     initializeOpenGLFunctions();
 
 
-        arrayBuf.create();
-        indexBuf.create();
+       // arrayBuf.create();
+       // indexBuf.create();
 
 
 
@@ -80,8 +80,8 @@ GeometryEngine::GeometryEngine()    //RENDER ENGINE
 GeometryEngine::~GeometryEngine()
 {
 
-        arrayBuf.destroy();
-        indexBuf.destroy();
+       // arrayBuf.destroy();
+       // indexBuf.destroy();
 
 
 }
@@ -90,25 +90,44 @@ GeometryEngine::~GeometryEngine()
 void GeometryEngine::initGeometry()
 {
 
+    GameObject * soleil = new Sphere();
+    GameObject * terre = new Sphere();
+    GameObject * lune = new Sphere();
 
-    Sphere * soleil = new Sphere();
-    soleil->init(arrayBuf,indexBuf);
-    soleil->scale(QVector3D(1.5f,1.5f,1.5f));
-    soleil->update(arrayBuf,indexBuf);
+    lune->init();
 
-    std::cout<<"Size vertices : "<<soleil->size_vertices<<std::endl;
-    std::cout<<"Size indices : "<<soleil->size_indices<<std::endl;
+    lune->g_translate(QVector3D(1.5,0.0,0.0));
+
+
+
+
+    terre->init();
+    terre->addChild(lune);
+    terre->g_translate(QVector3D(3.0,0.0,0.0));
+    terre->g_scale(QVector3D(0.5,0.5,0.5));
+    lune->g_rotate(QVector3D(0.0,0.0,60.0));
+    lune->g_scale(QVector3D(0.2,0.2,0.2));
+
+
+
+    soleil->init();
+    soleil->addChild(terre);
+    soleil->g_scale(QVector3D(2.0f,2.0f,2.0f));
+    //soleil->g_rotate(QVector3D(0.0,0.0,0.0));
+
+
+    soleil->update();
+
+
     gameobjects.push_back(soleil);
 
 
-/*
-    Sphere * terre = new Sphere();
-    terre->init(arrayBuf,indexBuf);
-    terre->scale(QVector3D(0.5,0.5,0.5));
-    terre->translate(QVector3D(3.0,0.0,0.0));
-    terre->update(arrayBuf,indexBuf);
-    gameobjects.push_back(terre);
-*/
+
+
+
+
+
+
 
 
 }
@@ -116,19 +135,21 @@ void GeometryEngine::initGeometry()
 //! [2]
 void GeometryEngine::drawGeometry(QOpenGLShaderProgram *program)
 {
+    size = 0;    //reInitialiser le size
+
     for(size_t i = 0; i < gameobjects.size(); i++){
-       gameobjects[i]->render(program, arrayBuf, indexBuf);
+       gameobjects[i]->render(program);
 
         size += gameobjects[i]->indexSize;
-        std::cout<<"Size : "<<size<<std::endl;
+        //std::cout<<"Size : "<<size<<std::endl;
     }
-    /*
-    std::cout<<"Size GameObjects : "<<gameobjects.size()<<std::endl;
-    std::cout<<"Size total Index : "<<this->size<<std::endl;
-*/
+
+   // std::cout<<"Size GameObjects : "<<gameobjects.size()<<std::endl;
+    //std::cout<<"Size total Index : "<<this->size<<std::endl;
 
 
-    glDrawElements(GL_TRIANGLES, this->size , GL_UNSIGNED_SHORT, 0);
+
+    //glDrawElements(GL_TRIANGLES, this->size , GL_UNSIGNED_SHORT, 0);
     if(this->polygone_line) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

@@ -1,10 +1,16 @@
 #include "Sphere.h"
 
-Sphere::Sphere(){
-
+Sphere::Sphere()
+    :indexBuf(QOpenGLBuffer::IndexBuffer){
+    arrayBuf.create();
+    indexBuf.create();
 }
 
-void Sphere::init(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
+void Sphere::init(){
+
+    initializeOpenGLFunctions();
+
+    GameObject::init();
 
     std::vector<QVector3D> vertices;
     std::vector<std::vector<GLushort>> indices;
@@ -29,30 +35,12 @@ void Sphere::init(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
 
 }
 
-void Sphere::update(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
-    /*
-    std::vector<QVector3D> vertices;
-    std::vector<std::vector<GLushort>> indices;
-    OBJIO::open("sphere.obj",vertices,indices);
+void Sphere::update(){
 
-    size_vertices += vertices.size();
-    size_indices += indices.size() * 3;
-
-    t_vertices = new QVector3D[vertices.size()];
-    t_indices = new GLushort[indices.size() * 3];
-
-    for(size_t i = 0; i < vertices.size(); i++){
-        t_vertices[i] = vertices[i];
-    }
-    for(size_t i = 0; i < indices.size(); i++){
-        for(size_t j = 0; j < indices[i].size(); j++){
-            t_indices[i * 3 + j] = indices[i][j];
-        }
-    }
-*/
-
+    GameObject::update();
     for(int i = 0; i < size_vertices; i++){
         QVector4D transformedPoint;
+        //this->getTransform().apply();
         transformedPoint = this->getTransform().getAppliedMatrix() * (QVector4D(t_vertices[i], 1.0)) ;
         t_vertices[i] = QVector3D(transformedPoint);
     }
@@ -63,10 +51,13 @@ void Sphere::update(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
     indexBuf.bind();
     indexBuf.allocate(t_indices, size_indices * sizeof(GLushort));
 
+
 }
 
 
-void Sphere::render(QOpenGLShaderProgram *program, QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
+void Sphere::render(QOpenGLShaderProgram *program){
+
+    GameObject::render(program);
 
     // Tell OpenGL which VBOs to use
     arrayBuf.bind();
@@ -89,5 +80,8 @@ void Sphere::render(QOpenGLShaderProgram *program, QOpenGLBuffer arrayBuf, QOpen
     program->setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 2, sizeof(VertexData));
 */
     // Draw cube geometry using indices from VBO 1
+    glDrawElements(GL_TRIANGLES, size_indices , GL_UNSIGNED_SHORT, 0);
+
+
 
 }

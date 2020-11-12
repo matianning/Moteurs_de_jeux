@@ -1,63 +1,92 @@
 #include "GameObject.h"
 
 
-void GameObject::translate(const QVector3D & t){
+void GameObject::g_translate(const QVector3D & t){
+    std::cout<<"translate test"<<std::endl;
     this->transform.setPosition(t);
-    this->transform.apply();
+
     for(GameObject * child : children){
-        child->transform.setPosition(t);
-        child->transform.apply();
+        if(children.size()!=0){
+            child->g_translate(t);
+        }
+        else{
+            child->transform.setPosition(t);
+            child->transform.apply();
+        }
+
     }
+    this->transform.apply();
 }
-void GameObject::rotate(const QVector3D & r){
+void GameObject::g_rotate(const QVector3D & r){
+    std::cout<<"rotate test"<<std::endl;
     this->transform.setRotation(r);
-    this->transform.apply();
+
+    std::cout<<"Rotation : "<<r.x()<<","<<r.y()<<","<<r.z()<<std::endl;
     for(GameObject * child : children){
-        child->transform.setRotation(r);
-        child->transform.apply();
+        if(children.size()!=0){
+            child->g_rotate(r);
+        }
+        else{
+            child->transform.setRotation(r);
+            child->transform.apply();
+        }
+
     }
+    this->transform.apply();
 }
-void GameObject::scale(const QVector3D & scale){
+void GameObject::g_scale(const QVector3D & scale){
+    std::cout<<"scale test"<<std::endl;
     this->transform.setScale(scale);
-    this->transform.apply();
+    std::cout<<"children : "<<children.size()<<std::endl;
     for(GameObject * child : children){
-        child->transform.setScale(scale);
-        child->transform.apply();
+        if(child->children.size()!=0){
+            child->g_scale(scale);
+        }
+        else{
+            child->transform.setScale(scale);
+            child->transform.apply();
+        }
+
     }
+    this->transform.apply();
 }
 
 
 
-void GameObject::init(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
+void GameObject::init(){
 
     for(GameComponent component : components){
         component.init();
     }
 
     for(GameObject * child : children){
-        child->init(arrayBuf, indexBuf);
+        child->init();
     }
 }
 
-void GameObject::update(QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
+void GameObject::update(){
 
     for(GameComponent component : components){
         component.update();
     }
 
     for(GameObject * child : children){
-        child->update(arrayBuf,  indexBuf);
+       // child->transform.apply();
+        child->update();
     }
 }
 
-void GameObject::render(QOpenGLShaderProgram *program, QOpenGLBuffer arrayBuf, QOpenGLBuffer indexBuf){
+void GameObject::render(QOpenGLShaderProgram *program){
 
     for(GameComponent component : components){
         component.render();
     }
 
-    for(GameObject * child : children){
-        //this->size_indices += child->size_indices;
-        child->render(program, arrayBuf, indexBuf);
+    if(children.size()!=0){
+        for(GameObject * child : children){
+            //this->size_indices += child->size_indices;
+            child->render(program);
+        }
     }
+
 }

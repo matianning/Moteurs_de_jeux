@@ -75,6 +75,12 @@ private:
     int size = 0; //size index total
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
+
+
+    int sunRotate = 0;
+    int earthRotate = 0;
+    int moonRotate = 0;
+
 };
 
 #endif // GEOMETRYENGINE_H

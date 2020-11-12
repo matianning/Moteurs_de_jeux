@@ -10,28 +10,26 @@
 #include <QOpenGLBuffer>
 
 
-class GameObject{
+class GameObject : protected QOpenGLFunctions_3_1{
 
-private :
+protected :
     std::vector<GameObject *> children;
     std::vector<GameComponent> components;
     Transform transform;
 
 public :
 
-    GameObject() = default;
+    GameObject(){children = std::vector<GameObject*>();
+                 components = std::vector<GameComponent>();
+                 transform = Transform();}
 
-    virtual void init(QOpenGLBuffer arrayBuf,
-                      QOpenGLBuffer indexBuf);   //Initilisation de l'objet
-    virtual void update(QOpenGLBuffer arrayBuf,
-                        QOpenGLBuffer indexBuf);  //mettre à jour (eg transformation) de l'objet
-    virtual void render(QOpenGLShaderProgram *program,
-                        QOpenGLBuffer  arrayBuf,
-                        QOpenGLBuffer  indexBuf);  //dessiner (à nouveau)
+    virtual void init();   //Initilisation de l'objet
+    virtual void update();  //mettre à jour (eg transformation) de l'objet
+    virtual void render(QOpenGLShaderProgram *program);  //dessiner (à nouveau)
 
-    void translate(const QVector3D & t);
-    void rotate(const QVector3D & r);
-    void scale(const QVector3D & scale);
+    void g_translate(const QVector3D & t);
+    void g_rotate(const QVector3D & r);
+    void g_scale(const QVector3D & scale);
 
     void addChild(GameObject * child){children.push_back(child);}
     void addComponent(GameComponent component){components.push_back(component);}

@@ -2,7 +2,7 @@
 
 
 void GameObject::g_translate(const QVector3D & t){
-    std::cout<<"translate test"<<std::endl;
+    //std::cout<<"translate test"<<std::endl;
     this->transform.setPosition(t);
 
     for(GameObject * child : children){
@@ -71,7 +71,6 @@ void GameObject::update(){
     }
 
     for(GameObject * child : children){
-       // child->transform.apply();
         child->update();
     }
 }
@@ -84,7 +83,6 @@ void GameObject::render(QOpenGLShaderProgram *program){
 
     if(children.size()!=0){
         for(GameObject * child : children){
-            //this->size_indices += child->size_indices;
             child->render(program);
         }
     }

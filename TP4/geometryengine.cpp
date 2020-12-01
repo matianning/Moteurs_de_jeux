@@ -8,11 +8,6 @@
 #include <iostream>
 #include "BasicIO.h"
 
-struct VertexData
-{
-    QVector3D position;
-    QVector2D texCoord;
-};
 
 void GeometryEngine::createScene(){
 

@@ -4,6 +4,7 @@ TARGET = gameengine
 TEMPLATE = app
 
 SOURCES += main.cpp \
+    BoundingSphere.cpp \
     gameObject.cpp \
     physicsEngine.cpp \
     transform.cpp
@@ -14,6 +15,8 @@ SOURCES += \
 
 HEADERS += \
     BasicIO.h \
+    BoundingSphere.h \
+    IntersectData.h \
     gameObject.h \
     mainwidget.h \
     geometryengine.h \

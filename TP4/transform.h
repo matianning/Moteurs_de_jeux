@@ -23,7 +23,7 @@ public:
 
 
 
-    QVector3D applyToPoint(QVector3D p);
+    QVector3D applyToPoint(QVector3D  p);
     QVector3D applyToVector(QVector3D v);
     QVector3D applyToVersor(QVector3D v);
 

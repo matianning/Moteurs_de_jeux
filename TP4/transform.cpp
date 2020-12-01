@@ -7,7 +7,11 @@ Transform::Transform()
     translation=QVector3D(0,0,0);
     scale=QVector3D(1,1,1);
     rotation=QQuaternion(0,0,0,0);
-    transformMat.setToIdentity();
+    QMatrix3x3 tmp = rotation.toRotationMatrix();
+    transformMat = QMatrix4x4(tmp(0,0)*scale.x(),tmp(0,1),tmp(0,2),translation.x(),
+                              tmp(1,0),tmp(1,1)*scale.y(),tmp(1,2),translation.y(),
+                              tmp(2,0),tmp(2,1),tmp(2,2)*scale.z(),translation.z(),
+                              0,0,0,1);
 }
 
 Transform::Transform(QVector3D translate, QVector3D s, QQuaternion r)
@@ -15,14 +19,14 @@ Transform::Transform(QVector3D translate, QVector3D s, QQuaternion r)
     translation=translate;
     rotation=r;
     scale=s;
-    QMatrix3x3 tmp = r.toRotationMatrix();
+    QMatrix3x3 tmp = rotation.toRotationMatrix();
     transformMat = QMatrix4x4(tmp(0,0)*scale.x(),tmp(0,1),tmp(0,2),translation.x(),
                               tmp(1,0),tmp(1,1)*scale.y(),tmp(1,2),translation.y(),
                               tmp(2,0),tmp(2,1),tmp(2,2)*scale.z(),translation.z(),
                               0,0,0,1);
 }
 
-QVector3D Transform::applyToPoint(QVector3D p)
+QVector3D Transform::applyToPoint(QVector3D  p)
 {
     QVector4D tmp = QVector4D(p.x(),p.y(),p.z(),1) * transformMat;
     return QVector3D(tmp.x(),tmp.y(),tmp.z());

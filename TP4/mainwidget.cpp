@@ -197,12 +197,6 @@ void MainWidget::paintGL()
         last_time = QTime::currentTime();
     }
 
-/*
-    qglColor(Qt::white);
-    renderText(20, 20, QString("FPS:%1").arg(last_count));
-*/
-
-
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -214,10 +208,12 @@ void MainWidget::paintGL()
 //! [6]
     // Calculate model view transformation
     QMatrix4x4 matrixMVP;
+
+
     QMatrix4x4 view, model;
 
     model.setToIdentity();
-   // view.setToIdentity();
+    view.setToIdentity();
 
     //==============Transformation du monde===============
 
@@ -230,7 +226,7 @@ void MainWidget::paintGL()
     view.lookAt(QVector3D(0,1.0 * this->geometries->ratio,1.5* this->geometries->ratio), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
 
     matrixMVP = this->projection * view * model;
-    float isPlane = 1.0f;
+
     program.setUniformValue("mvp_matrix", matrixMVP);
 
 //! [6]
@@ -248,10 +244,11 @@ void MainWidget::paintGL()
 
     //std::cout<<geometries->sizeObject()<<std::endl;
 
+    float isPlane = 1.0f;
 
     glEnable(GL_LIGHTING);
     program.setUniformValue("isPlane",isPlane);
-    geometries->getGameObjects().at(0).render(&program);
+    geometries->getGameObjects().at(0).render(&program, projection);
 
 
 
@@ -260,18 +257,19 @@ void MainWidget::paintGL()
 
     //============Transformation de sphere================
 
-    model.translate(ball_x,ball_y, ball_z);
-    model.translate(0.5 * this->geometries->ratio,1.0* this->geometries->ratio,0.0);
-    model.rotate(90,QVector3D(1.0,0.0,0.0));   //pour dresser le plan
-    model.translate(0.0,5.0,5.0);
-    model.scale(0.5,0.5,0.5);
     matrixMVP = this->projection * view * model;
-    program.setUniformValue("mvp_matrix", matrixMVP);
+    //program.setUniformValue("mvp_matrix", matrixMVP);
     isPlane = 0.0f;
     program.setUniformValue("isPlane",isPlane);
 
-    geometries->getGameObjects().at(1).render(&program);
+    //**************Calculer le centre de la sphère*******************
+    geometries->getGameObjects().at(1).calculateCenter(projection);
+    QVector3D sphereCenter = geometries->getGameObjects().at(1).getCenter();
 
+    //**************Adjuster l'hauteur avec celle de plane************
+    ball_y = geometries->getGameObjects().at(0).getHauteur(sphereCenter);
+    geometries->getGameObjects().at(1).move(ball_x,ball_y, ball_z);
+    geometries->getGameObjects().at(1).render(&program, matrixMVP);
 
 }
 
@@ -296,10 +294,10 @@ void MainWidget::keyPressEvent(QKeyEvent* e){
         mouvement_y-=0.1f;
         break;
     case Qt::Key::Key_Up:
-        ball_y+=0.1f;
+        ball_z-=0.1f;
         break;
     case Qt::Key::Key_Down:
-        ball_y-=0.1f;
+        ball_z+=0.1f;
         break;
     case Qt::Key::Key_Left:
         ball_x-=0.1f;
@@ -312,14 +310,20 @@ void MainWidget::keyPressEvent(QKeyEvent* e){
         else mode_libre = true;
         break;
     case Qt::Key::Key_P :
-        /*
-        if(this->geometries->polygone_line == true){
-            this->geometries->polygone_line = false;
+
+        if(this->geometries->getGameObjects().at(0).polygone_line == true){
+            for(size_t i = 0; i < this->geometries->getGameObjects().size(); i++){
+                this->geometries->getGameObjects().at(i).polygone_line = false;
+            }
+
         }
         else{
-            this->geometries->polygone_line = true;
+            for(size_t i = 0; i < this->geometries->getGameObjects().size(); i++){
+                this->geometries->getGameObjects().at(i).polygone_line = true;
+            }
+
         }
-        */
+
         break;
     }
     repaint();

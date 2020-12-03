@@ -3,7 +3,9 @@
 #include <QImage>
 #include <iostream>
 
-
+float distance(QVector3D p1, QVector3D p2){
+    return sqrt((p1.x()-p2.x())*(p1.x()-p2.x()) + (p1.y()-p2.y())*(p1.y()-p2.y()) + (p1.z()-p2.z())*(p1.z()-p2.z()));
+}
 
 GameObject::GameObject(objectType t)
     :indexBuf(QOpenGLBuffer::IndexBuffer),type(t),center(0.0,0.0,0.0)
@@ -33,19 +35,23 @@ GameObject::~GameObject()
     indexBuf.destroy();
 }
 
+
+
 void GameObject::init(){
-
-/*
-    for(GameObject child : children){
-        child.init();
-    }
-*/
-
     switch (type) {
     case objectType::SPHERE :
-        initObjGeometry("sphere.obj");
+        //************Gestionnaire de détail*****************
+        distance_objet_camera = distance(cameraPosition, center);
+        if(distance_objet_camera < seuil1){ //Très proche
+            initObjGeometry("sphere.obj");
+        }
+        else if (distance_objet_camera >= seuil1 && distance_objet_camera < seuil2){ //Distance
+            initSimplifiedObjGeometry("sphere.obj");
+        }
+        else{   //loin de camera
+            initMinimalistObjGeometry("sphere.obj");
+        }
         break;
-
     case objectType::PLANE :
         initPlaneGeometry();
         break;
@@ -147,9 +153,7 @@ void GameObject::calculateCenter(QMatrix4x4 projection){
     //std::cout<<center.x()<<","<<center.y()<<","<<center.z()<<std::endl;
 }
 
-float distance(QVector3D p1, QVector3D p2){
-    return sqrt((p1.x()-p2.x())*(p1.x()-p2.x()) + (p1.y()-p2.y())*(p1.y()-p2.y()) + (p1.z()-p2.z())*(p1.z()-p2.z()));
-}
+
 
 float GameObject::getHauteur(QVector3D p){
     float hauteur(0.0);
@@ -185,15 +189,10 @@ void GameObject::drawObjGeometry(QOpenGLShaderProgram *program, QMatrix4x4 proje
     arrayBuf.bind();
     indexBuf.bind();
 
-    // Offset for position
     quintptr offset = 0;
-
-    // Tell OpenGL programmable pipeline how to locate vertex position data
     int vertexLocation = program->attributeLocation("a_position");
     program->enableAttributeArray(vertexLocation);
     program->setAttributeBuffer(vertexLocation, GL_FLOAT, offset, 3, sizeof(QVector3D));
-
-
     if(this->polygone_line) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -209,7 +208,6 @@ void GameObject::drawObjGeometry(QOpenGLShaderProgram *program, QMatrix4x4 proje
     matrix.scale(transform.getScaling());
 
     program->setUniformValue("mvp_matrix", projection * matrix);
-
 
     glDrawElements(GL_TRIANGLES, this->IndexSize, GL_UNSIGNED_SHORT, 0);
 }

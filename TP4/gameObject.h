@@ -50,6 +50,15 @@ public :
     void move(float x, float y, float z);
     float getHauteur(QVector3D p);  //Retourner l'hauteur correspondante selon un point
 
+    //***********Gestionnaire de détail**********
+    void setCameraPosition(QVector3D p){cameraPosition = p;}
+    QVector3D cameraPosition;
+    float distance_objet_camera;
+    float seuil1;
+    float seuil2;
+    void initSimplifiedObjGeometry(std::string a){initObjGeometry("sphere.obj");}   //à modifier avec le maillage simplifié
+    void initMinimalistObjGeometry(std::string a){initObjGeometry("sphere.obj");}
+
 private :
     void initPlaneGeometry();
     void initObjGeometry(std::string filename);
@@ -69,6 +78,7 @@ private :
     float offset_sphere = 2.0f;
     objectType type;
     QVector3D center;       //Barycentre du objet
+
     std::vector<QVector3D> centers; //Barycentre des triangles
     Transform transform;
     std::vector<GameObject> children;

@@ -225,6 +225,7 @@ void MainWidget::paintGL()
 
     view.lookAt(QVector3D(0,1.0 * this->geometries->ratio,1.5* this->geometries->ratio), QVector3D(0,0,0.0), QVector3D(0.0,1.0,0.0));
 
+
     matrixMVP = this->projection * view * model;
 
     program.setUniformValue("mvp_matrix", matrixMVP);
@@ -265,7 +266,7 @@ void MainWidget::paintGL()
     //**************Calculer le centre de la sphère*******************
     geometries->getGameObjects().at(1).calculateCenter(projection);
     QVector3D sphereCenter = geometries->getGameObjects().at(1).getCenter();
-
+    geometries->getGameObjects().at(1).setCameraPosition(QVector3D(0,1.0 * this->geometries->ratio,1.5* this->geometries->ratio));
     //**************Adjuster l'hauteur avec celle de plane************
     ball_y = geometries->getGameObjects().at(0).getHauteur(sphereCenter);
     geometries->getGameObjects().at(1).move(ball_x,ball_y, ball_z);
